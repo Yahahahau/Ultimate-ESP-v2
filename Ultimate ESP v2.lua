@@ -3,6 +3,12 @@ local LocalPlayer = Players.LocalPlayer
 local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
 
+-- ลบ UI เดิมถ้ามี
+local existingGui = CoreGui:FindFirstChild("ESPGui")
+if existingGui then
+    existingGui:Destroy()
+end
+
 -- GUI
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "ESPGui"
@@ -10,7 +16,7 @@ screenGui.ResetOnSpawn = false
 screenGui.Parent = CoreGui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 180, 0, 60)
+frame.Size = UDim2.new(0, 180, 0, 90) -- เพิ่มความสูงให้มีปุ่มเพิ่ม
 frame.Position = UDim2.new(0.5, -90, 0.05, 0)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BackgroundTransparency = 0.2
@@ -18,7 +24,7 @@ frame.BorderSizePixel = 0
 frame.AnchorPoint = Vector2.new(0.5, 0)
 frame.ClipsDescendants = true
 frame.Active = true
-frame.Draggable = true
+frame.Draggable = true -- เปิดลากย้ายได้
 frame.Parent = screenGui
 frame.ZIndex = 3
 
@@ -26,6 +32,7 @@ local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 12)
 corner.Parent = frame
 
+-- ปุ่มเปิดปิด ESP
 local toggleButton = Instance.new("TextButton")
 toggleButton.Size = UDim2.new(0, 160, 0, 30)
 toggleButton.Position = UDim2.new(0, 10, 0, 10)
@@ -42,11 +49,28 @@ local cornerButton = Instance.new("UICorner")
 cornerButton.CornerRadius = UDim.new(0, 8)
 cornerButton.Parent = toggleButton
 
+-- ปุ่มซ่อน/แสดง UI
+local toggleUIBtn = Instance.new("TextButton")
+toggleUIBtn.Size = UDim2.new(0, 160, 0, 30)
+toggleUIBtn.Position = UDim2.new(0, 10, 0, 50)
+toggleUIBtn.Text = "Hide UI"
+toggleUIBtn.Font = Enum.Font.GothamBold
+toggleUIBtn.TextSize = 18
+toggleUIBtn.TextColor3 = Color3.new(1, 1, 1)
+toggleUIBtn.BackgroundColor3 = Color3.fromRGB(255, 100, 100)
+toggleUIBtn.AutoButtonColor = true
+toggleUIBtn.Parent = frame
+toggleUIBtn.ZIndex = 4
+
+local cornerToggleUI = Instance.new("UICorner")
+cornerToggleUI.CornerRadius = UDim.new(0, 8)
+cornerToggleUI.Parent = toggleUIBtn
+
 local credit = Instance.new("TextLabel")
 credit.Size = UDim2.new(1, 0, 0, 20)
 credit.Position = UDim2.new(0, 0, 1, -20)
 credit.BackgroundTransparency = 1
-credit.Text = "By Yahahaha"  -- แก้ชื่อเครดิตตรงนี้
+credit.Text = "By Yahahaha"
 credit.Font = Enum.Font.Gotham
 credit.TextSize = 12
 credit.TextColor3 = Color3.fromRGB(170, 170, 170)
@@ -60,8 +84,9 @@ clickSound.Volume = 1
 clickSound.Parent = frame
 
 local espEnabled = true
+local uiVisible = true
 
--- ฟังก์ชันแปลง HSV เป็น RGB
+-- ฟังก์ชันแปลง HSV เป็น RGB (ทำสีรุ้ง)
 local function HSVToRGB(h, s, v)
     local c = v * s
     local x = c * (1 - math.abs((h / 60) % 2 - 1))
@@ -110,6 +135,13 @@ toggleButton.MouseButton1Click:Connect(function()
     espEnabled = not espEnabled
     setESPState(espEnabled)
     toggleButton.Text = espEnabled and "ESP ON" or "ESP OFF"
+    clickSound:Play()
+end)
+
+toggleUIBtn.MouseButton1Click:Connect(function()
+    uiVisible = not uiVisible
+    frame.Visible = uiVisible
+    toggleUIBtn.Text = uiVisible and "Hide UI" or "Show UI"
     clickSound:Play()
 end)
 
