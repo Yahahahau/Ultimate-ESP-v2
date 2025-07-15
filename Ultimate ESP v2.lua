@@ -46,7 +46,7 @@ local credit = Instance.new("TextLabel")
 credit.Size = UDim2.new(1, 0, 0, 20)
 credit.Position = UDim2.new(0, 0, 1, -20)
 credit.BackgroundTransparency = 1
-credit.Text = "By Boston and ChatGPT"
+credit.Text = "By Yahahaha"  -- แก้ชื่อเครดิตตรงนี้
 credit.Font = Enum.Font.Gotham
 credit.TextSize = 12
 credit.TextColor3 = Color3.fromRGB(170, 170, 170)
@@ -120,7 +120,7 @@ local function createHighlight(player)
         highlight.Name = "ESPHighlight"
         highlight.FillColor = Color3.fromRGB(255, 0, 0)
         highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-        highlight.FillTransparency = 0.6 -- ปรับให้จางลงหน่อย
+        highlight.FillTransparency = 0.6 -- ทำให้จางลง
         highlight.OutlineTransparency = 0
         highlight.Adornee = player.Character
         highlight.Parent = player.Character
