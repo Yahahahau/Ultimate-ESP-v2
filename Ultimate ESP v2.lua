@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
 
 -- GUI
 local screenGui = Instance.new("ScreenGui")
@@ -60,6 +61,38 @@ clickSound.Parent = frame
 
 local espEnabled = true
 
+-- ฟังก์ชันแปลง HSV เป็น RGB
+local function HSVToRGB(h, s, v)
+    local c = v * s
+    local x = c * (1 - math.abs((h / 60) % 2 - 1))
+    local m = v - c
+    local r, g, b = 0, 0, 0
+    if h < 60 then
+        r, g, b = c, x, 0
+    elseif h < 120 then
+        r, g, b = x, c, 0
+    elseif h < 180 then
+        r, g, b = 0, c, x
+    elseif h < 240 then
+        r, g, b = 0, x, c
+    elseif h < 300 then
+        r, g, b = x, 0, c
+    else
+        r, g, b = c, 0, x
+    end
+    return Color3.new(r + m, g + m, b + m)
+end
+
+local hue = 0
+RunService.RenderStepped:Connect(function()
+    if espEnabled then
+        hue = (hue + 1) % 360
+        toggleButton.BackgroundColor3 = HSVToRGB(hue, 1, 1)
+    else
+        toggleButton.BackgroundColor3 = Color3.fromRGB(120, 120, 120)
+    end
+end)
+
 local function setESPState(state)
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and player.Character then
@@ -77,7 +110,6 @@ toggleButton.MouseButton1Click:Connect(function()
     espEnabled = not espEnabled
     setESPState(espEnabled)
     toggleButton.Text = espEnabled and "ESP ON" or "ESP OFF"
-    toggleButton.BackgroundColor3 = espEnabled and Color3.fromRGB(50,150,255) or Color3.fromRGB(120,120,120)
     clickSound:Play()
 end)
 
@@ -88,7 +120,7 @@ local function createHighlight(player)
         highlight.Name = "ESPHighlight"
         highlight.FillColor = Color3.fromRGB(255, 0, 0)
         highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-        highlight.FillTransparency = 0.3
+        highlight.FillTransparency = 0.6 -- ปรับให้จางลงหน่อย
         highlight.OutlineTransparency = 0
         highlight.Adornee = player.Character
         highlight.Parent = player.Character
@@ -124,7 +156,7 @@ local function updateNameTag(player)
         local tag = player.Character.Head.NameTag.TagLabel
         local distance = (LocalPlayer.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude
         local health = math.floor(player.Character.Humanoid.Health)
-        tag.Text = player.Name .. " | " .. string.format("%.0f", distance).."m | ❤️"..health
+        tag.Text = player.Name .. " | " .. string.format("%.0f", distance) .. "m | ❤️" .. health
     end
 end
 
